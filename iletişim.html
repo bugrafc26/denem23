@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İletişim Formu</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        /* Genel stil */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2c2c2c; /* Koyu gri arka plan */
+            color: #ffffff; /* Beyaz metin rengi */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: linear-gradient(to bottom right, #2c2c2c, #444);
+            flex-direction: column;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Başlık stili */
+        h1 {
+            font-size: 3rem; /* Başlık fontu büyütülmüş */
+            color: #e67e22; /* Turuncu başlık rengi */
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: 2.2rem; /* Alt başlık fontu büyütülmüş */
+            color: #ecf0f1; /* Açık gri başlık rengi */
+            margin-bottom: 20px;
+        }
+
+        /* Form stili */
+        #contactForm {
+            background-color: #3a3a3a; /* Daha açık gri form arka planı */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        label {
+            font-size: 18px; /* Etiket fontu büyütülmüş */
+            font-weight: 500;
+            display: block;
+            margin-bottom: 10px;
+            color: #ecf0f1;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 16px; /* Padding büyütüldü */
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px; /* Font boyutu büyütüldü */
+            background-color: #444;
+            color: #ffffff;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: 2px solid #e67e22; /* Odak rengi */
+            background-color: #555;
+        }
+
+        button {
+            width: 100%;
+            padding: 16px; /* Padding büyütüldü */
+            border: none;
+            border-radius: 8px;
+            background-color: #e67e22; /* Turuncu buton rengi */
+            color: #ffffff;
+            font-size: 20px; /* Buton yazısı büyütüldü */
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #d35400; /* Hover rengi */
+        }
+
+        button:active {
+            background-color: #c0392b; /* Buton tıklanırken renk değişimi */
+        }
+
+        .form-feedback {
+            text-align: center;
+            font-size: 18px; /* Geri bildirim yazısı büyütüldü */
+            margin-top: 20px;
+            color: #e67e22;
+        }
+
+        .form-feedback.success {
+            color: #27ae60;
+        }
+
+        .form-feedback.error {
+            color: #e74c3c;
+        }
+
+        .form-feedback.information {
+            color: #ecf0f1; /* Bilgilendirme rengi */
+        }
+
+        /* Alt kısım - Tüm haklar saklıdır */
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: #ecf0f1;
+        }
+
+        .footer a {
+            color: #e67e22;
+            text-decoration: none;
+        }
+
+        /* Mobil uyumlu */
+        @media screen and (max-width: 600px) {
+            #contactForm {
+                padding: 20px;
+                max-width: 90%;
+            }
+
+            h1 {
+                font-size: 2.2rem; /* Mobilde başlık fontu küçültülmüş */
+            }
+
+            h2 {
+                font-size: 1.8rem; /* Mobilde alt başlık fontu küçültülmüş */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logo -->
+    <img src="logo.png" alt="Logo" style="max-width: 100px; margin-bottom: 20;"> <!-- Logo buraya ekleniyor -->
+
+    <h1>Reklam ve işbirliği için veya merak ettiğiniz sorular için iletişim alanını doldurabilirsiniz</h1>
+
+    <h2>Bizimle İletişime Geçin</h2>
+
+    <form id="contactForm">
+        <label for="sendername">Adınız:</label>
+        <input type="text" id="sendername" name="sendername" placeholder="Adınızı girin" required>
+
+        <label for="email">E-posta:</label>
+        <input type="email" id="email" name="email" placeholder="E-posta adresinizi girin" required>
+
+        <label for="message">Mesajınız:</label>
+        <textarea id="message" name="message" placeholder="Mesajınızı yazın" required></textarea>
+
+        <button type="button" onclick="sendMail();">Gönder</button>
+        
+        <div class="form-feedback" id="formFeedback"></div>
+    </form>
+
+    
+
+    <script>
+        function sendMail() {
+            // Form geri bildirimini temizle
+            document.getElementById('formFeedback').innerHTML = '';
+
+            // Kullanıcı bilgilerini al
+            const senderName = document.querySelector("#sendername").value;
+            const email = document.querySelector("#email").value;
+            const message = document.querySelector("#message").value;
+
+            // Hatalı giriş kontrolü
+            if (!senderName || !email || !message) {
+                document.getElementById('formFeedback').innerHTML = 'Lütfen tüm alanları doldurun.';
+                document.getElementById('formFeedback').classList.add('error');
+                return;
+            }
+
+            // EmailJS'i başlat
+            emailjs.init("VQ2MyjNiUfyYbOXKc"); // YOUR_PUBLIC_KEY kısmını kendi public API anahtarınızla değiştirin
+
+            var params = {
+                sendername: senderName,
+                email: email,
+                message: message
+            };
+
+            var serviceID = "service_oeyjrsg"; // Servis ID'sini kendi ID'nizle değiştirin
+            var templateID = "template_igp6cs6"; // Şablon ID'sini kendi ID'nizle değiştirin
+
+            // Mesajı gönderme
+            emailjs.send(serviceID, templateID, params)
+                .then(function(response) {
+                    document.getElementById('formFeedback').innerHTML = 'Mesaj başarıyla gönderildi! En kısa zamanda dönüş yapacağız.';
+                    document.getElementById('formFeedback').classList.add('success');
+                })
+                .catch(function(error) {
+                    document.getElementById('formFeedback').innerHTML = 'Mesaj gönderilemedi, lütfen tekrar deneyin.';
+                    document.getElementById('formFeedback').classList.add('error');
+                });
+        }
+    </script>
+            <a href="index.html">← Ana Sayfaya Dön</a>
+</body>
+</html>
